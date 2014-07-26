@@ -2,10 +2,10 @@
 TARGET = $(notdir $(CURDIR))
 
 # The teensy version to use, 30 or 31
-TEENSY = 30
+TEENSY = 31
 
 # Set to 24000000, 48000000, or 96000000 to set CPU core speed
-TEENSY_CORE_SPEED = 48000000
+TEENSY_CORE_SPEED = 96000000
 
 # Some libraries will require this to be defined
 # If you define this, you will break the default main.cpp
@@ -79,7 +79,7 @@ endif
 LDFLAGS = -Os -Wl,--gc-sections -mcpu=cortex-m4 -mthumb -T$(LDSCRIPT)
 
 # additional libraries to link
-LIBS = -lm
+LIBS = -lm -larm_cortexM4l_math
 
 # names for the compiler programs
 CC = $(abspath $(COMPILERPATH))/arm-none-eabi-gcc
@@ -88,8 +88,8 @@ OBJCOPY = $(abspath $(COMPILERPATH))/arm-none-eabi-objcopy
 SIZE = $(abspath $(COMPILERPATH))/arm-none-eabi-size
 
 # automatically create lists of the sources and objects
-LC_FILES := $(wildcard $(LIBRARYPATH)/*/*.c)
-LCPP_FILES := $(wildcard $(LIBRARYPATH)/*/*.cpp)
+LC_FILES := $(wildcard $(LIBRARYPATH)/*/*.c $(LIBRARYPATH)/*/utility/*.c)
+LCPP_FILES := $(wildcard $(LIBRARYPATH)/*/*.cpp $(LIBRARYPATH)/*/utility/*.cpp)
 TC_FILES := $(wildcard $(COREPATH)/*.c)
 TCPP_FILES := $(wildcard $(COREPATH)/*.cpp)
 C_FILES := $(wildcard src/*.c)
@@ -97,7 +97,7 @@ CPP_FILES := $(wildcard src/*.cpp)
 INO_FILES := $(wildcard src/*.ino)
 
 # include paths for libraries
-L_INC := $(foreach lib,$(filter %/, $(wildcard $(LIBRARYPATH)/*/)), -I$(lib))
+L_INC := $(foreach lib,$(filter %/, $(wildcard $(LIBRARYPATH)/*/ $(LIBRARYPATH)/*/utility/)), -I$(lib))
 
 SOURCES := $(C_FILES:.c=.o) $(CPP_FILES:.cpp=.o) $(INO_FILES:.ino=.o) $(TC_FILES:.c=.o) $(TCPP_FILES:.cpp=.o) $(LC_FILES:.c=.o) $(LCPP_FILES:.cpp=.o)
 OBJS := $(foreach src,$(SOURCES), $(BUILDDIR)/$(src))
